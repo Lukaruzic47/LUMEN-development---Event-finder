@@ -13,6 +13,16 @@ services:
       timeout: 5s
       retries: 5
 
+  redis:
+    image: "redis:latest"
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   evento-app:
     image: "evento-app:latest"
     environment:
@@ -20,8 +30,12 @@ services:
       - "SPRING_DATASOURCE_USERNAME=myuser"
       - "SPRING_DATASOURCE_PASSWORD=secret"
       - "SPRING_JPA_DATABASE_PLATFORM=org.hibernate.dialect.PostgreSQLDialect"
+      - "SPRING_REDIS_HOST=redis"
+      - "SPRING_REDIS_PORT=6379"
     depends_on:
       postgres:
         condition: service_healthy
+      redis:
+        condition: service_healthy
     ports:
-      - "8080:8080"
+      - "8081:8080"
