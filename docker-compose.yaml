@@ -14,6 +14,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+
   redis:
     image: "redis:latest"
     ports:
@@ -23,6 +24,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+
   evento-app:
     build:
       context: ./evento-backend/app
@@ -42,7 +44,11 @@ services:
   evento-frontend:
     build:
       context: ./evento-frontend
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./evento-frontend:/app
+      - /app/node_modules
     ports:
-      - "4440:80"
-    depends_on:
-      - evento-app
+      - "5173:5173"
+    environment:
+      - CHOKIDAR_USEPOLLING=true
